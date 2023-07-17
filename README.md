@@ -5,6 +5,13 @@ VTB MLKIT
 
 A framework optimised for binary classification tasks. Developed by VTB risk data scientists and engineers, and is used for research, risk models devops and validation
 
+#### Authors:
+** Autobunry
+* Vasily Sizov - https://github.com/Vasily-Sizov
+* Dmitry Timokhin - https://github.com/dmitrytimokhin
+* Pavel Zelenskiy - https://github.com/vselenskiy777
+* Ruslan Popov - https://github.com/RuslanPopov98
+
 Reference Papers
 ----------------
 
