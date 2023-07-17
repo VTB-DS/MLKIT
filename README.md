@@ -3,7 +3,7 @@
 VTB MLKIT
 ===============================
 
-A framework optimised for binary classification tasks. Developed by VTB risk data scientists and engineers
+A framework optimised for binary classification tasks, developed by VTB risk data scientists and engineers
 
 Modules
 ----------------
