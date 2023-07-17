@@ -9,7 +9,8 @@ Modules
 ----------------
 
 * ScoreKit - module for inetrpitable models 
-* Autobinary - module for non-inetrpitable models 
+* Autobinary - module for non-inetrpitable models
+* Interface - flask application for no-code usage
 
 Authors
 ----------------
