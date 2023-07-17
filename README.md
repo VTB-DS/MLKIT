@@ -7,7 +7,7 @@ A framework optimised for binary classification tasks. Developed by VTB risk dat
 
 #### Authors:
 
-Autobunry
+Autobinary
 * Vasily Sizov - https://github.com/Vasily-Sizov
 * Dmitry Timokhin - https://github.com/dmitrytimokhin
 * Pavel Zelenskiy - https://github.com/vselenskiy777
