@@ -8,8 +8,8 @@ A framework optimised for binary classification tasks. Developed by VTB risk dat
 Modules
 ----------------
 
-ScoreKit - module for inetrpitable models 
-Autobinary - module for non-inetrpitable models 
+* ScoreKit - module for inetrpitable models 
+* Autobinary - module for non-inetrpitable models 
 
 Authors
 ----------------
