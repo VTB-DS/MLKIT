@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<title>MLKit by VTB</title>
+<link rel="icon" href="https://www.vtb.ru/favicon.ico" sizes="any">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<meta name="description" content="MLKit">
+<link rel="stylesheet" href="/static/bootstrap.css">
+<style>
+  table {font-size:75%;
+    width: 100%;}
+  th {padding: 5px;}
+  td {padding: 5px;}
+  .codeblock {background: #f4f4f4;
+border: 1px solid #ddd;
+border-left: 3px solid #0085ff;
+color: #666;
+page-break-inside: avoid;
+font-family: monospace;
+font-size: 15px;
+line-height: 1.6;
+margin-bottom: 1.6em;
+max-width: 100%;
+overflow: auto;
+padding: 1em 1.5em;
+display: block;
+word-wrap: break-word;}
+.stepper-wrapper {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+.stepper-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+.stepper-item::before {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #ccc;
+  width: 100%;
+  top: 20px;
+  left: -50%;
+  z-index: 2;
+}
+
+.stepper-item::after {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #ccc;
+  width: 100%;
+  top: 20px;
+  left: 50%;
+  z-index: 2;
+}
+
+.stepper-item .step-counter {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ccc;
+  margin-bottom: 6px;
+}
+
+.stepper-item.active {
+  font-weight: bold;
+}
+.stepper-item.active .step-counter {
+  background-color: #0085ff;
+  color: #fff;
+}
+.stepper-item.completed .step-counter {
+  background-color: #000;
+  color: #fff;
+}
+
+.stepper-item.completed::after {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #000;
+  width: 100%;
+  top: 20px;
+  left: 50%;
+  z-index: 3;
+}
+
+.stepper-item:first-child::before {
+  content: none;
+}
+.stepper-item:last-child::after {
+  content: none;
+}
+</style>
+</head>
+<body>
+    
+
+<div class="col-lg-8 mx-auto p-4 py-md-5">
+  <header class="d-flex align-items-center pb-3 mb-5">
+    <a href="/" class="d-flex align-items-center text-body-emphasis text-decoration-none">
+      <span class="fs-4">MLKit<sup style="color:#0085ff;">VTB</sup></span>
+    </a>
+  </header>
+
+  <main>
+
+    <div class="stepper-wrapper">
+      <div class="stepper-item completed">
+        <div class="step-counter">1</div>
+        <div class="step-name">Data Quality Assessment</div>
+      </div>
+      <div class="stepper-item completed">
+        <div class="step-counter">2</div>
+        <div class="step-name">Sampling</div>
+      </div>
+      <div class="stepper-item completed">
+        <div class="step-counter">3</div>
+        <div class="step-name">Single Factor Analisys & Binning</div>
+      </div>
+      <div class="stepper-item active">
+        <div class="step-counter">4</div>
+        <div class="step-name">Multi Factor Analysis & Model fitting</div>
+      </div>
+      <div class="stepper-item">
+        <div class="step-counter">5</div>
+        <div class="step-name">Model Report</div>
+      </div>
+    </div>
+
+
+<h3>Multi Factor Analysis & Model fitting</h3>
+<h5 style="margin-top:20px;">Optimal binning parameters</h5>
+<table border="1" class="dataframe" >
+  <thead>
+    <tr style="text-align: right;">
+      <th>Parameter</th>
+      <th style="width: 25%">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Binning Method</th>
+      <td style="background: #ccc;">
+        <select name="corr_method" id="corr_method" style="width:100%;">
+        <option value="pearson">Pearson</option>
+        <option value="kendall">Kendall</option>
+        <option value="kendall">Spearman</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th>Maximum number of variables that can be added to the model</th>
+      <td style="background: #ccc;"><input type="text" id="max_n_bins" name="max_n_bins" value="100" style="width:100%;"></td>
+    </tr>
+    <tr>
+      <th>Correlation coefficient bound.</th>
+      <td style="background: #ccc;"><input type="text" id="min_bin_size" name="min_bin_size" value="0.70" style="width:100%;"></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="mb-5 mt-3">
+  <a href="/model" class="btn btn-primary btn-sm px-4" onclick="$('#loading').show();">Apply new parameters</a>
+  <div id="loading" style="display:none; margin-top:20px;"><img style="margin-right: 10px;" src="{{ url_for('static', filename='loading.gif') }}" width="30" height="30"> Applying new parameters. Please wait.</div>
+</div>
+
+<h5>Correlation matrix</h5>
+The correlation matrix shows correlation coefficients between variables
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+  <div class="col d-flex align-items-start">
+    {{corr_mat_html|safe}}
+  </div>
+</div>
+
+<div class="mb-5 mt-3">
+  <a href="/underconstruction" class="btn btn-primary btn-sm px-4" >Next Step</a>
+</div>
+
+</main>
+<footer class="pt-5 my-5 text-body-secondary border-top">
+  Created by VTB Data Science Risk Team &middot; &copy; 2023
+</footer>
+</div>
+
+</body>
+</html>

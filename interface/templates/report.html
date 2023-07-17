@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<title>MLKit by VTB</title>
+<link rel="icon" href="https://www.vtb.ru/favicon.ico" sizes="any">
+<meta name="description" content="MLKit">
+<link rel="stylesheet" href="/static/bootstrap.css">
+<link rel="stylesheet" href="https://icons.getbootstrap.com/assets/font/bootstrap-icons.min.css">
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<style>
+  table {font-size:75%;
+    width: 100%;}
+  th {padding: 5px;}
+  td {padding: 5px;}
+  .codeblock {background: #f4f4f4;
+border: 1px solid #ddd;
+border-left: 3px solid #0085ff;
+color: #666;
+page-break-inside: avoid;
+font-family: monospace;
+font-size: 15px;
+line-height: 1.6;
+margin-bottom: 1.6em;
+max-width: 100%;
+overflow: auto;
+padding: 1em 1.5em;
+display: block;
+word-wrap: break-word;}
+</style>
+</head>
+<body>
+    
+
+<div class="col-lg-8 mx-auto p-4 py-md-5">
+  <header class="d-flex align-items-center pb-3 mb-5">
+    <a href="/" class="d-flex align-items-center text-body-emphasis text-decoration-none">
+      <span class="fs-4">MLKit<sup style="color:#0085ff;">VTB</sup></span>
+    </a>
+  </header>
+
+  <main>
+
+<h3>Model</h3>
+
+<p>A credit scoring model is a mathematical model used to estimate the probability of default, which is the probability that customers may trigger a credit event (e.g., bankruptcy, obligation default, failure to pay, and cross-default events). In a credit scoring model, the probability of default is normally presented in the form of a credit score. A higher score refers to a lower probability of default.</p>
+<pre class="codeblock">logreg = LogisticRegressionModel(clf=None,ds=ds,transformer=None,round_digits=3,name='FirstModel')</pre>
+
+<h5>One-factor analysis</h5>
+Predictive power (Gini coef.) of a numerical features against the target
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+  <div class="col d-flex align-items-start">
+    {{gini_html|safe}}
+  </div>
+</div><pre class="codeblock">ds.calc_gini()</pre>
+
+<h5>Correlation matrix</h5>
+The correlation matrix shows correlation coefficients between variables
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+  <div class="col d-flex align-items-start">
+    {{corr_mat_html|safe}}
+  </div>
+</div>
+<pre class="codeblock">ds.corr_mat(sample_name=None, features=f, corr_method='pearson', corr_threshold=0.75, description_df=None, styler=False)</pre>
+
+<h5>Model prediction power</h5>
+<p>The test is carried out to determine the ability of the model to distinguish between potentially defaulted and non-defaulted customers, the absolute value of the Gini is estimated</p>          
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+  <div class="col d-flex align-items-start">
+    <div style="width: 100%;">
+      <div class="progress" style="height: 30px;">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{gini_train}}"
+        aria-valuemin="0" aria-valuemax="100" style="width:{{gini_train}}%">
+        {{gini_train}}%
+        </div>
+      </div>
+      <p>Gini on DEV sample</p>
+    </div>
+  </div>
+  <div class="col d-flex align-items-start">
+    <div style="width: 100%;">
+      <div class="progress" style="height: 30px;">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{gini_test}}"
+        aria-valuemin="0" aria-valuemax="100" style="width:{{gini_test}}%">
+        {{gini_test}}%
+        </div>
+      </div>
+      <p>Gini on OOS sample</p>
+    </div>
+  </div>
+<!--
+  <div class="col d-flex align-items-start">
+    <div style="width: 100%;">
+      <div class="progress" style="height: 20px;">
+        <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="30"
+        aria-valuemin="0" aria-valuemax="100" style="width:30%">
+          30%
+        </div>
+      </div>
+      <p>Gini on OOT sample</p>
+    </div>
+  </div>
+-->
+</div>
+<pre class="codeblock">
+ds = logreg.scoring(ds, score_field='score')
+ds.calc_gini(features=['score'])</pre>
+<h5>Model stability</h5>
+<p>The test reflects the stability of the model over time. The change in the ranking strength of the model on the validation set compared to the development set is evaluated.</p>
+<p>The Gini coefficient on the monitoring sample is {{gini_test}}%, which is lower than the value obtained on the development sample = {{gini_train}}%. There is a positive trend: the Gini coefficient increased during the monitoring period from 0.435 to 0.559 by 0.124.</p>
+<p>Gini stability plot</p>
+<div id="model_stability_plot" style="height: 300px;"></div>
+
+<script>Highcharts.chart('model_stability_plot', {
+  chart: {
+    type: 'spline',
+    scrollablePlotArea: {
+      minWidth: 600,
+      scrollPositionX: 1
+    }
+  },
+  title: {
+    text: '',
+    align: 'left'
+  },
+  xAxis: {
+    type: 'datetime',
+    labels: {
+      overflow: 'justify'
+    }
+  },
+  yAxis: {
+    labels: {
+      enabled: false
+    },
+    title: {
+      text: null
+    },
+    min: 0,
+    max: 1,
+    minorGridLineWidth: 0,
+    gridLineWidth: 0,
+    alternateGridColor: null,
+    plotBands: [{ // Low
+      from: 0.0,
+      to: 0.2,
+      color: '#e9ecef',
+      label: {
+        text: 'Low prediction power',
+        style: {
+          color: '#606060'
+        }
+      }
+    }, { // Target
+      from: 0.2,
+      to: 0.6,
+      color: 'rgba(0, 0, 0, 0)',
+      label: {
+        text: 'Medium prediction power',
+        style: {
+          color: '#606060'
+        }
+      }
+    }, { // High
+      from: 0.6,
+      to: 1.0,
+      color: '#e9ecef',
+      label: {
+        text: 'High prediction power',
+        style: {
+          color: '#606060'
+        }
+      }
+    }]
+  },
+  legend: {
+    enabled:false 
+  },
+  tooltip: {
+    //valueSuffix: ' %'
+  },
+  plotOptions: {
+    spline: {
+      lineWidth: 4,
+      states: {
+        hover: {
+          lineWidth: 5
+        }
+      },
+      marker: {
+        enabled: false
+      },
+      pointIntervalUnit: 'month',
+      pointStart: Date.UTC(2021, 5, 13, 0, 0, 0)
+    }
+  },
+  series: [{
+    color: '#0085ff',
+    name: 'Gini',
+    data: [
+      0.5, 0.55, 0.63, 0.7, 0.65, 0.7, 0.66, 0.61, 0.58, 0.65,
+      0.7, 0.73, 0.78, 0.82, 0.78, 0.75, 0.68, 0.75, 0.72,
+      0.77, 0.67, 0.65, 0.53, 0.61, 0.58]
+
+  }],
+  navigation: {
+    menuItemStyle: {
+      fontSize: '10px'
+    }
+  }
+});</script>   
+
+<h5 class="mt-5">Features</h5>
+<p>{{features_len}} features have been selected in final model</p>
+<!-- For loop logic of jinja template -->
+{%for i in range(0, features_len)%}
+  <h5>{{i+1}}. Feature "{{features_list[i]}}"</h5>
+  {{features_coefs[features_list[i]][3]}}
+  <p>The feature "{{features_list[i]}}" is divided into 3 bins, there is no violation of monotonicity. There is no high concentration when grouping the feature by bins, HHI index = XXX. Coefficient = XXX</p>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+  <div class="col d-flex align-items-start" style="width: 33%;">
+    <div style="width: 100%;">
+      <p>DEV sample</p>
+      <div id="f{{i+1}}_dev_plot" style="height: 250px;"></div>
+      <script>
+        //alert("Hello");
+        //alert(JSON.parse('{{features_coefs[features_list[i]][3]}}'))
+      </script>
+      <script>Highcharts.chart('f{{i+1}}_dev_plot', {
+        chart: {
+          zoomType: 'xy'
+        },
+        title: {
+          text: '',
+          align: 'left'
+        },
+        xAxis: [{
+          //categories: JSON.parse(decodeURIComponent('{{features_coefs[features_list[i]][3]}}')),
+          //categories: ['0 to 1.5', '1.5 to 2.5', '2.5 to 3.5', '3.5 to inf'],
+          crosshair: true
+        }],
+        yAxis: [{ // Primary yAxis
+          //min: 0,
+          //max: 40,
+          labels: {
+            enabled: false
+          },
+          title: {
+            text: null
+          }
+        }, { // Secondary yAxis
+          //min: 0,
+          //max: 40,
+          title: {
+            text: null
+          },
+          labels: {
+            enabled: false
+          },
+          opposite: true
+        }],
+        tooltip: {
+          shared: true
+        },
+        legend: {
+          align: 'left',
+          x: 10,
+          verticalAlign: 'top',
+          y: 10,
+          floating: true,
+          backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || // theme
+            'rgba(255,255,255,0.25)'
+        },
+        series: [{
+          color: '#0085ff',
+          name: 'Number of observations',
+          type: 'column',
+          yAxis: 1,
+          data: JSON.parse('{{features_coefs[features_list[i]][1]}}'),
+          tooltip: {
+            valueSuffix: ' %'
+          }
+      
+        }, {
+          color: '#000000',
+          name: 'WOE',
+          type: 'spline',
+          data: JSON.parse('{{features_coefs[features_list[i]][2]}}'),
+          tooltip: {
+            //valueSuffix: ' %'
+          }
+        }]
+      });</script> 
+    </div>
+  </div>
+  <div class="col d-flex align-items-start" style="width: 33%;">
+    <div style="width: 100%;">
+      <p>OOS sample</p>
+      <div id="f{{i+1}}_oos_plot" style="height: 250px;"></div>
+      <script>Highcharts.chart('f{{i+1}}_oos_plot', {
+        chart: {
+          zoomType: 'xy'
+        },
+        title: {
+          text: '',
+          align: 'left'
+        },
+        xAxis: [{
+          //categories: ['Bin 1', 'Bin 2', 'Bin 3'],
+          crosshair: true
+        }],
+        yAxis: [{ // Primary yAxis
+          min: 0,
+          max: 40,
+          labels: {
+            enabled: false
+          },
+          title: {
+            text: null
+          }
+        }, { // Secondary yAxis
+          min: 0,
+          max: 40,
+          title: {
+            text: null
+          },
+          labels: {
+            enabled: false
+          },
+          opposite: true
+        }],
+        tooltip: {
+          shared: true
+        },
+        legend: {
+          align: 'left',
+          x: 10,
+          verticalAlign: 'top',
+          y: 10,
+          floating: true,
+          backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || // theme
+            'rgba(255,255,255,0.25)'
+        },
+        series: [{
+          color: '#0085ff',
+          name: 'Number of observations',
+          type: 'column',
+          yAxis: 1,
+          data: [22.6, 24.8, 25.7],
+          tooltip: {
+            //valueSuffix: ' %'
+          }
+      
+        }, {
+          color: '#000000',
+          name: 'WOE',
+          type: 'spline',
+          data: [10.6, 11.9, 7.2],
+          tooltip: {
+            //valueSuffix: ' %'
+          }
+        }]
+      });</script> 
+    </div>
+  </div>
+<!--
+  <div class="col d-flex align-items-start" style="width: 33%;">
+    <div style="width: 100%;">
+      <p>OOT sample</p>
+      <div id="f{{i+1}}_oot_plot" style="height: 250px;"></div>
+      <script>Highcharts.chart('f{{i+1}}_oot_plot', {
+        chart: {
+          zoomType: 'xy'
+        },
+        title: {
+          text: '',
+          align: 'left'
+        },
+        xAxis: [{
+          categories: ['Bin 1', 'Bin 2', 'Bin 3'],
+          crosshair: true
+        }],
+        yAxis: [{ // Primary yAxis
+          min: 0,
+          max: 40,
+          labels: {
+            enabled: false
+          },
+          title: {
+            text: null
+          }
+        }, { // Secondary yAxis
+          min: 0,
+          max: 40,
+          title: {
+            text: null
+          },
+          labels: {
+            enabled: false
+          },
+          opposite: true
+        }],
+        tooltip: {
+          shared: true
+        },
+        legend: {
+          align: 'left',
+          x: 10,
+          verticalAlign: 'top',
+          y: 10,
+          floating: true,
+          backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || // theme
+            'rgba(255,255,255,0.25)'
+        },
+        series: [{
+          color: '#0085ff',
+          name: 'Observations share',
+          type: 'column',
+          yAxis: 1,
+          data: [25.6, 27.8, 23.7],
+          tooltip: {
+            valueSuffix: ' %'
+          }
+      
+        }, {
+          color: '#000000',
+          name: 'Event rate',
+          type: 'spline',
+          data: [13.6, 13.9, 9.2],
+          tooltip: {
+            valueSuffix: ' %'
+          }
+        }]
+      });</script> 
+    </div>
+  </div>
+-->
+</div>
+{%endfor%}
+    
+
+<div class="mb-5 mt-5">
+  <a href="" class="btn btn-primary btn-sm px-4"><i class="bi bi-cloud-download"></i> Export Pickle</a>
+  <a href="" class="btn btn-primary btn-sm px-4"><i class="bi bi-printer"></i> Print Report</a>
+</div>
+
+</main>
+<footer class="pt-5 my-5 text-body-secondary border-top">
+  Created by VTB Data Science Risk Team &middot; &copy; 2023
+</footer>
+</div>
+
+</body>
+</html>

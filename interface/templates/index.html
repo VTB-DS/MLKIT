@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<title>MLKit by VTB</title>
+<link rel="icon" href="https://www.vtb.ru/favicon.ico" sizes="any">
+<meta name="description" content="MLKit">
+<link rel="stylesheet" href="/static/bootstrap.css">
+<link rel="stylesheet" href="https://icons.getbootstrap.com/assets/font/bootstrap-icons.min.css">
+
+</head>
+<body>
+    
+
+
+<div class="col-lg-8 mx-auto p-4 py-md-5">
+  <header class="d-flex align-items-center pb-3 mb-5">
+    <a href="/" class="d-flex align-items-center text-body-emphasis text-decoration-none">
+      <span class="fs-4">MLKit<sup style="color:#0085ff;">VTB</sup></span>
+    </a>
+  </header>
+
+  <main>
+    <h1 class="text-body-emphasis"><span style="color:#0085ff;">MLKit</span> is a no-code interface for Risk Modelling open source libraries</h1>
+    <p class="fs-5 col-md-12" style="padding-right: 0px;padding-left: 0px;">It is developed by VTB risk data scientists and engineers, and is used for research, risk models devops and validation. It is in open source and can be used by anyone..</p>
+
+    <div class="mb-5 mt-1">
+      <a href="/data" class="btn btn-primary btn-lg px-4">Demo</a>
+
+      <form enctype="multipart/form-data" action="/data" method = "post" style="display: inline;" >
+        <!--<input type="file" name="file">-->
+        <input hidden id="getFile" type="file" name="file" onchange="this.form.submit()" /> 
+        <label for="getFile" class="btn btn-primary btn-lg px-4" style="margin-bottom: 0px; font-weight: 500;">Upload CSV</label>
+      </form>
+
+    </div>
+    
+    
+    <hr class="col-3 col-md-2 mb-5">
+
+    <h2 class="text-body-emphasis">Features</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+      <div class="col d-flex align-items-start">
+        <div>
+          <i class="bi bi-database-fill-check" style="font-size: 40px;"></i>
+          <h5>Data Quality Assessment</h5>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div>
+          <i class="bi bi-node-plus" style="font-size: 40px;"></i>
+          <h5>Smart Features <br>Generation</h5>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div>
+          <i class="bi bi-award" style="font-size: 40px;"></i>
+          <h5>Best Model <br>Auto-Selection</h5>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div>
+          <i class="bi bi-emoji-smile" style="font-size: 40px;"></i>
+          <h5>Human Frendly <br>Interpretation</h5>
+        </div>
+      </div>
+    </div>
+
+    <hr class="col-3 col-md-2 mb-5">
+    
+    <div class="row g-5">
+      <div class="col-md-12">
+        <h2 class="text-body-emphasis">Join our Community</h2>
+        <p>- Report an issue with ScoreKit on <a href="https://github.com/Ruslan-Sakovich/scorekit">GitHub</a>.</p>
+        <p>- Ask a question on <a href="https://stackoverflow.com/questions/tagged/scorekit?tab=Newest">Stack Overflow</a> with the scorekit tag, we monitor this for new questions.</p>
+        <p>- Join Telegram chat to discuss with real users.</p>
+      </div>
+    </div>
+  </main>
+  <footer class="pt-5 my-5 text-body-secondary border-top">
+    Created by VTB Data Science Risk Team &middot; &copy; 2023
+  </footer>
+</div>
+
+  </body>
+</html>

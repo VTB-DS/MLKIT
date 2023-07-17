@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<title>MLKit by VTB</title>
+<link rel="icon" href="https://www.vtb.ru/favicon.ico" sizes="any">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/treemap.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<meta name="description" content="MLKit">
+<link rel="stylesheet" href="/static/bootstrap.css">
+<style>
+  table {font-size:75%;
+    width: 100%;}
+  th {padding: 5px;}
+  td {padding: 5px;}
+  .codeblock {background: #f4f4f4;
+border: 1px solid #ddd;
+border-left: 3px solid #0085ff;
+color: #666;
+page-break-inside: avoid;
+font-family: monospace;
+font-size: 15px;
+line-height: 1.6;
+margin-bottom: 1.6em;
+max-width: 100%;
+overflow: auto;
+padding: 1em 1.5em;
+display: block;
+word-wrap: break-word;}
+.stepper-wrapper {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+.stepper-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+.stepper-item::before {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #ccc;
+  width: 100%;
+  top: 20px;
+  left: -50%;
+  z-index: 2;
+}
+
+.stepper-item::after {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #ccc;
+  width: 100%;
+  top: 20px;
+  left: 50%;
+  z-index: 2;
+}
+
+.stepper-item .step-counter {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ccc;
+  margin-bottom: 6px;
+}
+
+.stepper-item.active {
+  font-weight: bold;
+}
+.stepper-item.active .step-counter {
+  background-color: #0085ff;
+  color: #fff;
+}
+.stepper-item.completed .step-counter {
+  background-color: #000;
+  color: #fff;
+}
+
+.stepper-item.completed::after {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #000;
+  width: 100%;
+  top: 20px;
+  left: 50%;
+  z-index: 3;
+}
+
+.stepper-item:first-child::before {
+  content: none;
+}
+.stepper-item:last-child::after {
+  content: none;
+}
+</style>
+</head>
+<body onLoad="onLoad()">
+    
+<div class="col-lg-8 mx-auto p-4 py-md-5">
+  <header class="d-flex align-items-center pb-3 mb-5">
+    <a href="/" class="d-flex align-items-center text-body-emphasis text-decoration-none">
+      <span class="fs-4">MLKit<sup style="color:#0085ff;">VTB</sup></span>
+    </a>
+  </header>
+
+  <main>
+
+    <div class="stepper-wrapper">
+      
+      <div class="stepper-item completed">
+      <!--<div class="stepper-item completed">-->
+        <div class="step-counter"><a href="/data" style="color:white;">1</a></div>
+        <div class="step-name">Data Quality Assessment</div>
+      </div>
+      
+      <div class="stepper-item active">
+        <div class="step-counter">2</div>
+        <div class="step-name">Sampling</div>
+      </div>
+      <div class="stepper-item">
+        <div class="step-counter">3</div>
+        <div class="step-name">Single Factor Analisys & Binning</div>
+      </div>
+      <div class="stepper-item">
+        <div class="step-counter">4</div>
+        <div class="step-name">Multi Factor Analysis & Model fitting</div>
+      </div>
+      <div class="stepper-item">
+        <div class="step-counter">5</div>
+        <div class="step-name">Model Report</div>
+      </div>
+    </div>
+
+
+<h3>Sampling</h3>
+
+<p style="margin-top:20px;">Choose sampling parameters used for modelling</p>
+
+
+<table border="1" class="dataframe" style="margin-bottom:20px;">
+  <tr>
+    <th >Parameter</th>
+    <th style="width:100px;">Value</th>
+  </tr>
+  <tr>
+    <td>Bootstrap (Randomly increases the number of observations in the train sample. Does not affect other data samples)</td>
+    <td>
+      <select onchange="checkSize()" name="train_bootstrap" id="train_bootstrap" style="width:100%;border: none;color:#0085ff;font-weight: bold;">
+        <option value="True">True</option>
+        <option value="False" selected="selected">False</option>
+      </select>
+  </td>
+  </tr>
+  <tr>
+    <td>Stratify (Applied only to OOS test sample)</td>
+    <td>
+      <select onchange="checkSize()" name="train_stratify" id="train_stratify" style="width:100%;border: none;color:#0085ff;font-weight: bold;">
+        <option value="True">True</option>
+        <option value="False" selected="selected">False</option>
+        <!--<option value="List">List</option>-->
+      </select>
+    </td>
+  </tr>
+</table>
+<table border="1" class="dataframe">
+  <tr style="height: 50px;">
+    <th style="width:100px;">Sample</th>
+    <th>Description</th>
+    <th style="width:100px;">Sample size</th>
+    <th style="width:100px;">Onservations</th>
+    <th style="width:100px;">Targets</th>
+    <th style="width:100px;">Download</th>
+  </tr>
+  <tr style="height: 50px;">
+    <td>Train</td>
+    <td>The sample of data used to fit the model</td>
+    <td><input disabled onchange="checkSize()" type="number" id="train_size_input" name="train_size_input" value="{{train_size}}" style="width:100%;border: none;background-color: #fff;"></td>
+    <td>{{train_s}}</td>
+    <td>{{train_tr}}</td>
+    <td><a href="/download_train"><img src="/static/csv.png" width="24" height="24"></a></td>
+  </tr>
+  <tr style="height: 50px;">
+    <td>Test (OOS)</td>
+    <td>The sample of data used to measure the accuracy of your model at the same period of time</td>
+    <td><input onchange="checkSize()" type="number" min="0.0" max="1.0" step="0.1" id="oos_size_input" name="oos_size_input" value="{{oos_size}}" style="width:100%;border: none;color:#0085ff;font-weight: bold;"></td>
+    <td>{{test_s}}</td>
+    <td>{{test_tr}}</td>
+    <td><a href="/download_test"><img src="/static/csv.png" width="24" height="24"></a></td>
+  </tr>
+  <!--
+  <tr style="height: 50px;">
+    <td>Test (OOT)</td>
+    <td>The sample of data used to measure the accuracy of your model at the nearest period of time</td>
+    <td><input onchange="checkSize()" type="text" id="oot_size_input" name="oot_size_input" value="{{oot_size}}" style="width:100%;border: none;color:#0085ff;font-weight: bold;"></td>
+    <td>{{oot_s}}</td>
+    <td>{{oot_tr}}</td>
+    <td>csv</td>
+  </tr>
+  -->
+  <tr style="height: 50px;">
+    <td>Validation</td>
+    <td>The sample of data used to measure the accuracy of your model at the same period of time, but is not participated in model fitting pricess</td>
+    <td><input onchange="checkSize()" type="number" min="0.0" max="1.0" step="0.1" id="val_size_input" name="val_size_input" value="{{val_size}}" style="width:100%;border: none;color:#0085ff;font-weight: bold;"></td>
+    <td>{{val_s}}</td>
+    <td>{{val_tr}}</td>
+    <td><a href="/download_val"><img src="/static/csv.png" width="24" height="24"></a></td>
+  </tr>
+</table>
+<div id="alert_size" style="display:none;background-color: #ff0085; border-radius: 5px; padding:5px; margin-top:10px; color:white;">
+  Overall size of all data samples should be equal to 1 (100%)
+</div>
+<div id="alert_t_size" style="display:none;background-color: #ff0085; border-radius: 5px; padding:5px; margin-top:10px; color:white;">
+  We recommend to increase the number of observations in train sample
+</div>
+
+<form action="/sampling" method="get" class="mb-5 mt-3">
+  <input hidden type="text" id="target" name="target" value="{{target}}">
+  <input hidden type="text" id="train_size" name="train_size" value="{{train_size}}">
+  <input hidden type="text" id="oos_size" name="oos_size" value="{{oos_size}}">
+  <input hidden type="text" id="oot_size" name="oot_size" value="{{oot_size}}">
+  <input hidden type="text" id="val_size" name="val_size" value="{{val_size}}">
+  <input hidden type="text" id="bootstrap" name="bootstrap" value="{{bootstrap}}">
+  <input hidden type="text" id="stratify" name="stratify" value="{{stratify}}">
+  <input id="applyparams" name="applyparams" type="submit" value="Apply new Parameters" class="btn btn-primary btn-sm px-4">
+</form>
+
+<div id="chart-container" style="width: 400px; height: 200px;"></div>
+
+  <p style="margin-top:20px;">Select type of solving task</p>
+  <div>
+    <input type="checkbox" id="scales" name="scales" checked disabled>
+    <label for="scales">binary classification (interpretable model)</label>
+  </div>
+
+  <div>
+    <input type="checkbox" id="horns" name="horns" disabled>
+    <label for="horns">binary classification (uninterpretable model)</label>
+  </div>
+
+<div class="mb-5 mt-3">
+  <a href="/data" class="btn btn-dark btn-sm px-4" >Back</a>
+  <button onclick="nextStep()" id="nextstep" name="nextstep" class="btn btn-primary btn-sm px-4">Next Step</button>
+</div>
+<div id="loading" style="display:none;"><img style="margin-right: 10px;" src="{{ url_for('static', filename='loading.gif') }}" width="30" height="30"> We started building a model! It may take several minutes. Please wait.</div>
+</main>
+<footer class="pt-5 my-5 text-body-secondary border-top">
+  Created by VTB Data Science Risk Team &middot; &copy; 2023
+</footer>
+</div>
+<script>
+
+  function onLoad() {
+    var urlParams = new URLSearchParams(window.location.search);
+    let queryString = urlParams.get('stratify');
+    document.getElementById("train_stratify").querySelector("option[value='" + queryString + "']").selected = true;
+    let queryString2 = urlParams.get('bootstrap');
+    document.getElementById("train_bootstrap").querySelector("option[value='" + queryString2 + "']").selected = true;
+    }
+
+  function nextStep() {
+    window.location.href = "/underconstruction";
+  }
+  function checkSize () {
+
+    var oos_size = document.getElementById("oos_size_input").value
+    //var oot_size = document.getElementById("oot_size_input").value
+    var val_size = document.getElementById("val_size_input").value
+    //document.getElementById("train_size_input").value = Math.round((1-oos_size-oot_size-val_size)* 100) / 100; 
+    document.getElementById("train_size_input").value = Math.round((1-oos_size-val_size)* 100) / 100; 
+    var train_size = document.getElementById("train_size_input").value 
+
+    // hidden fields of post form
+
+    document.getElementById("bootstrap").value = document.getElementById("train_bootstrap").value
+    document.getElementById("stratify").value = document.getElementById("train_stratify").value
+    
+    document.getElementById("oos_size").value = document.getElementById("oos_size_input").value
+    //document.getElementById("oot_size").value = document.getElementById("oot_size_input").value
+    document.getElementById("train_size").value = document.getElementById("train_size_input").value
+    document.getElementById("val_size").value = document.getElementById("val_size_input").value
+    
+    // notification
+    if (train_size<0) {
+      document.getElementById("train_size").value = 0
+      document.getElementById("alert_size").style.display = "block";
+      document.getElementById("nextstep").disabled = true;
+      document.getElementById("applyparams").disabled = true;
+    } else {
+      document.getElementById("alert_size").style.display = "none";
+      document.getElementById("nextstep").disabled = false;
+      document.getElementById("applyparams").disabled = false;
+    }
+
+    if (train_size<0.1) {
+      document.getElementById("alert_t_size").style.display = "block";
+      document.getElementById("nextstep").disabled = true;
+      document.getElementById("applyparams").disabled = true;
+    } else {
+      document.getElementById("alert_t_size").style.display = "none";
+      document.getElementById("nextstep").disabled = false;
+      document.getElementById("applyparams").disabled = false;
+    }
+  }
+</script>
+<script>
+Highcharts.chart('chart-container', {
+    colorAxis: {
+        minColor: '#FFFFFF',
+        maxColor: Highcharts.getOptions().colors[0]
+    },
+    series: [{
+        type: 'treemap',
+        layoutAlgorithm: 'squarified',
+        clip: false,
+        data: [{
+            name: 'A',
+            value: 6,
+            colorValue: 1
+        }, {
+            name: 'B',
+            value: 6,
+            colorValue: 2
+        }, {
+            name: 'C',
+            value: 4,
+            colorValue: 3
+        }, {
+            name: 'D',
+            value: 3,
+            colorValue: 4
+        }, {
+            name: 'E',
+            value: 2,
+            colorValue: 5
+        }, {
+            name: 'F',
+            value: 2,
+            colorValue: 6
+        }, {
+            name: 'G',
+            value: 1,
+            colorValue: 7
+        }]
+    }],
+    title: {
+        text: 'Highcharts Treemap'
+    }
+});
+</script>
+</body>
+</html>
