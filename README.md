@@ -6,6 +6,8 @@ VTB MLKIT
 Reference Papers
 ----------------
 
+🇷🇺 Фреймворк ScoreKit для разработки интерпретируемых скоринговых моделей ([link](https://temofeev.ru/info/articles/freymvork-vtb-scorekit-dlya-razrabotki-interpretiruemykh-skoringovykh-modeley/)). 
+
 🇷🇺 Autobinary: библиотека для простого обучения «деревяшек» — Part 1 ([link](https://habr.com/ru/companies/vtb/articles/725956/)). 
 
 🇷🇺 Autobinary: библиотека для простого обучения «деревяшек» — Part 2 ([link](https://habr.com/ru/companies/vtb/articles/730028/)). 
