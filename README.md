@@ -27,7 +27,7 @@ ScoreKit
 Reference Papers
 ----------------
 
-🇷🇺 Фреймворк ScoreKit для разработки интерпретируемых скоринговых моделей ([link](https://temofeev.ru/info/articles/freymvork-vtb-scorekit-dlya-razrabotki-interpretiruemykh-skoringovykh-modeley/)). 
+🇷🇺 Фреймворк ScoreKit для разработки интерпретируемых скоринговых моделей ([link](https://habr.com/ru/companies/vtb/articles/743392/)). 
 
 🇷🇺 Autobinary: библиотека для простого обучения «деревяшек» — Part 1 ([link](https://habr.com/ru/companies/vtb/articles/725956/)). 
 
