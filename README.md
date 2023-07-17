@@ -5,6 +5,12 @@ VTB MLKIT
 
 A framework optimised for binary classification tasks. Developed by VTB risk data scientists and engineers, and is used for research, risk models devops and validation
 
+Modules
+----------------
+
+ScoreKit - module for inetrpitable models 
+Autobinary - module for non-inetrpitable models 
+
 Authors
 ----------------
 
